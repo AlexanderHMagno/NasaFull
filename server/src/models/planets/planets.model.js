@@ -1,10 +1,9 @@
 const { createReadStream } = require("fs");
-const { pipeline } = require("node:stream/promises");
 const { parse } = require("csv-parse");
 const os = require("os");
 const path = require("path");
 
-const habitable_Planets = [];
+const PlanetSchema = require("./planets.schema");
 
 //check if a planet is habitable
 
@@ -22,7 +21,7 @@ const habitabilitySize = (planet) => planet["koi_prad"] < 1.6;
 
 async function loadPlanets() {
   return await createReadStream(
-    path.join(__dirname, "..", "..", "data", "exoplanets.csv")
+    path.join(__dirname, "..", "..", "..", "data", "exoplanets.csv")
   )
     .pipe(
       parse({
@@ -30,9 +29,19 @@ async function loadPlanets() {
         columns: true,
       })
     )
-    .on("data", (planet) => {
+    .on("data", async (planet) => {
       if (habitability(planet)) {
-        habitable_Planets.push(planet);
+        await PlanetSchema.findOneAndUpdate(
+          {
+            kepler_name: planet.kepler_name,
+          },
+          {
+            kepler_name: planet.kepler_name,
+          },
+          {
+            upsert: true,
+          }
+        );
       }
     })
     .on("error", (err) => console.log(err))
@@ -43,8 +52,8 @@ async function loadPlanets() {
 // which means is the stream goes to work with the event loop and not the main JS stack, this is using the power
 // of distributing the workload in other parts of the OS.
 
-function getAllPlanets() {
-  return habitable_Planets;
+async function getAllPlanets() {
+  return await PlanetSchema.find({}, { kepler_name: 1, _id: 0 });
 }
 
 module.exports = {

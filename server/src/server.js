@@ -3,9 +3,11 @@
 //using other protocol....
 
 const HTTP = require("http");
+require("dotenv").config();
 
+const Database = require("../data/db/mongo");
 const app = require("./app");
-const { loadPlanets } = require("./models/planets.model");
+const { loadPlanets } = require("./models/planets/planets.model");
 
 const server = HTTP.createServer(app);
 
@@ -15,6 +17,7 @@ const PORT = process.env.PORT || 8000;
 
 async function startServer() {
   //Make sure the planets are loaded before
+  await Database.start();
   await loadPlanets();
   server.listen(PORT, () => {
     console.log(`Server is running in port ${PORT}`);

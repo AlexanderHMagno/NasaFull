@@ -3,14 +3,14 @@ const {
   createLaunch,
   abortMission,
   missionExistsById,
-} = require("../../models/launches.model");
+} = require("../../models/launches/launches.model");
 
-function httpGetAllLaunches(req, res) {
+async function httpGetAllLaunches(req, res) {
   //Values returns a iterable and not the correct value
-  return res.status(200).json(getAllLaunches());
+  return res.status(200).json(await getAllLaunches());
 }
 
-function httpcreateLaunch(req, res) {
+async function httpcreateLaunch(req, res) {
   const data = req.body;
 
   //data Validation
@@ -29,23 +29,21 @@ function httpcreateLaunch(req, res) {
     });
   }
 
-  //Assuming we are passing the correct data, we need to validate this data
-  const newLaunch = createLaunch(data);
-
+  const newLaunch = await createLaunch(data);
   return res.status(201).json(newLaunch);
 }
 
-function httpAbortLaunch(req, res) {
+async function httpAbortLaunch(req, res) {
   const id = Number(req.params.id);
   //Dont exits return an invalid status
-  if (!missionExistsById(id)) {
+  const missionExists = await missionExistsById(id);
+  if (!missionExists) {
     return res.status(404).json({
       error: "launch doesnt exists",
     });
   }
 
-  //
-  const aborted = abortMission(id);
+  const aborted = await abortMission(id);
 
   return res.status(200).json(aborted);
 }
