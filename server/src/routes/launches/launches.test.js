@@ -4,7 +4,7 @@ const Database = require("../../../services/db/mongo");
 
 describe("Test Launches API", () => {
   beforeAll(async () => {
-    await Database.start();
+    await Database.getInstance();
   });
 
   afterAll(async () => {

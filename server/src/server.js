@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8000;
 
 async function startServer() {
   //Make sure the planets are loaded before
-  await Database.start();
+  await Database.getInstance();
   await loadPlanets();
   server.listen(PORT, () => {
     console.log(`Server is running in port ${PORT}`);
