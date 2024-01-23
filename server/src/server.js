@@ -5,7 +5,7 @@
 const HTTP = require("http");
 require("dotenv").config();
 
-const Database = require("../data/db/mongo");
+const Database = require("../services/db/mongo");
 const app = require("./app");
 const { loadPlanets } = require("./models/planets/planets.model");
 

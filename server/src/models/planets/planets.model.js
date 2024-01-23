@@ -21,7 +21,7 @@ const habitabilitySize = (planet) => planet["koi_prad"] < 1.6;
 
 async function loadPlanets() {
   return await createReadStream(
-    path.join(__dirname, "..", "..", "..", "data", "exoplanets.csv")
+    path.join(__dirname, "..", "..", "..", "services", "exoplanets.csv")
   )
     .pipe(
       parse({

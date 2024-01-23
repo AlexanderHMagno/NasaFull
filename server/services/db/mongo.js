@@ -12,6 +12,10 @@ class Database {
         console.error(`There is an error when conection to mongo ${err}`)
       );
   }
+
+  static async disconnect() {
+    await mongodb.disconnect();
+  }
 }
 
 module.exports = Database;
