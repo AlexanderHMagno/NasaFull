@@ -1,6 +1,6 @@
 const {
   getAllLaunches,
-  createLaunch,
+  scheduleNewLaunch,
   abortMission,
   missionExistsById,
 } = require("../../models/launches/launches.model");
@@ -29,7 +29,7 @@ async function httpcreateLaunch(req, res) {
     });
   }
 
-  const newLaunch = await createLaunch(data);
+  const newLaunch = await scheduleNewLaunch(data);
   return res.status(201).json(newLaunch);
 }
 

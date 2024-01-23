@@ -23,7 +23,6 @@ const LaunchSchema = new mongoose.Schema({
   },
   customer: {
     type: [String],
-    default: ["alex inc", "NASA"],
   },
   upcoming: {
     type: Boolean,

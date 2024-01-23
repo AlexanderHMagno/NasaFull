@@ -11,19 +11,12 @@ async function missionExistsById(id) {
   return await launchesSchema.findOne({ flightNumber: id });
 }
 
-async function createLaunch(launch) {
-  const newLaunch = Object.assign(launch, {
-    flightNumber: await findNextFlightNumber(),
-  });
-
-  return await launchesSchema.create(newLaunch);
-}
-
 async function abortMission(id) {
-  return await launchesSchema.findOneAndUpdate(
-    { flightNumber: id },
-    { upcoming: false, succeess: false }
-  );
+  return await saveLaunch({
+    flightNumber: id,
+    upcoming: false,
+    succeess: false,
+  });
 }
 
 async function findNextFlightNumber() {
@@ -37,9 +30,26 @@ async function findNextFlightNumber() {
   else return launchNumber;
 }
 
+async function scheduleNewLaunch(launch) {
+  const organizeLaunch = Object.assign(launch, {
+    flightNumber: await findNextFlightNumber(),
+    customer: ["alex inc", "NASA"],
+  });
+
+  return await saveLaunch(organizeLaunch);
+}
+
+async function saveLaunch(launch) {
+  const data = await launchesSchema.findOneAndUpdate(
+    { flightNumber: launch.flightNumber },
+    launch,
+    { upsert: true, new: true }
+  );
+  return data;
+}
 module.exports = {
   getAllLaunches,
-  createLaunch,
+  scheduleNewLaunch,
   missionExistsById,
   abortMission,
 };
