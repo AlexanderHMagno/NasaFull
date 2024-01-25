@@ -5,8 +5,7 @@ const cors = require("cors");
 const path = require("path");
 const morgan = require("morgan");
 
-const planetsRouter = require("./routes/planets/planets.router");
-const launchesRouter = require("./routes/launches/launches.router");
+const API_V1 = require("./routes/api.v1");
 
 const app = new express();
 
@@ -28,8 +27,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 //Here we create the router itself
 
-app.use("/planets", planetsRouter);
-app.use("/launches", launchesRouter);
+//VERSIONING APIS
+app.use("/v1", API_V1);
 app.use("/*", (req, res) => res.sendFile("index.html"));
 
 module.exports = app;

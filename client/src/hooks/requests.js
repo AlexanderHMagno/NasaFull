@@ -1,4 +1,4 @@
-const URL = "http://localhost:8000";
+const URL = "http://localhost:8000/V1";
 
 async function httpGetPlanets() {
   try {

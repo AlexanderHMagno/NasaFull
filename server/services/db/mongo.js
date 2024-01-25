@@ -2,15 +2,13 @@ const mongodb = require("mongoose");
 
 class Database {
   static _database;
-  static dataConnnection = `mongodb+srv://${process.env.MONGOUSER}:${process.env.MONGOPASSWORD}@sandbox.jjfwv.mongodb.net/nasa?retryWrites=true&w=majority`;
-
   constructor() {
     Database._start();
   }
 
   static async _start() {
     await mongodb
-      .connect(this.dataConnnection)
+      .connect(process.env.MONGOURL)
       .then(() => {
         console.log("Mongo has been connected");
       })
