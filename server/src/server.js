@@ -8,6 +8,7 @@ require("dotenv").config();
 const Database = require("../services/db/mongo");
 const app = require("./app");
 const { loadPlanets } = require("./models/planets/planets.model");
+const { loadSpaceXData } = require("./models/launches/launches.model");
 
 const server = HTTP.createServer(app);
 
@@ -19,6 +20,7 @@ async function startServer() {
   //Make sure the planets are loaded before
   await Database.getInstance();
   await loadPlanets();
+  await loadSpaceXData();
   server.listen(PORT, () => {
     console.log(`Server is running in port ${PORT}`);
   });

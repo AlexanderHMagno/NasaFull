@@ -1,4 +1,5 @@
 const launchesSchema = require("./launches.schema");
+const axios = require("axios");
 
 //this can be replaced
 const launchNumber = 100;
@@ -8,7 +9,7 @@ async function getAllLaunches() {
 }
 
 async function missionExistsById(id) {
-  return await launchesSchema.findOne({ flightNumber: id });
+  return await findLaunch({ flightNumber: id });
 }
 
 async function abortMission(id) {
@@ -33,7 +34,7 @@ async function findNextFlightNumber() {
 async function scheduleNewLaunch(launch) {
   const organizeLaunch = Object.assign(launch, {
     flightNumber: await findNextFlightNumber(),
-    customer: ["alex inc", "NASA"],
+    customers: ["alex inc", "NASA"],
   });
 
   return await saveLaunch(organizeLaunch);
@@ -47,7 +48,68 @@ async function saveLaunch(launch) {
   );
   return data;
 }
+
+async function findLaunch(filter) {
+  return await launchesSchema.findOne(filter);
+}
+
+async function loadSpaceXData() {
+  const alreadySet = await findLaunch({
+    flightNumber: 100,
+    rocket: "Falcon 9",
+  });
+  if (alreadySet) return;
+
+  console.log("Loading Space X data");
+
+  const launches = await axios.post(
+    "https://api.spacexdata.com/v5/launches/query",
+    {
+      options: {
+        pagination: false,
+        populate: [
+          {
+            path: "rocket",
+            select: "name",
+          },
+          {
+            path: "payloads",
+            select: "customers",
+          },
+        ],
+      },
+    }
+  );
+
+  for (const launch of launches.data.docs) {
+    const {
+      payloads,
+      name,
+      rocket,
+      date_local,
+      flight_number,
+      success,
+      upcoming,
+    } = launch;
+    const customers = payloads.flatMap((data) => data["customers"]);
+
+    const newLaunch = {
+      mission: name,
+      rocket: rocket.name,
+      launchDate: date_local,
+      target: "Kepler-442-b",
+      flightNumber: flight_number,
+      success: !!success,
+      upcoming: upcoming,
+      customers,
+    };
+
+    await saveLaunch(newLaunch);
+  }
+}
+
 module.exports = {
+  loadSpaceXData,
   getAllLaunches,
   scheduleNewLaunch,
   missionExistsById,
