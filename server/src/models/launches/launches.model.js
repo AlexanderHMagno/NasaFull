@@ -33,7 +33,7 @@ async function findNextFlightNumber() {
 
 async function scheduleNewLaunch(launch) {
   const organizeLaunch = Object.assign(launch, {
-    flightNumber: await findNextFlightNumber(),
+    flightNumber: launch.flightNumber || (await findNextFlightNumber()),
     customers: ["alex inc", "NASA"],
   });
 

@@ -14,7 +14,8 @@ describe("Test Launches API", () => {
 
   describe("Launches Api", () => {
     const postRequestBody = {
-      mission: "Reminescen Exploration",
+      flightNumber: 205,
+      mission: "Reminescen Explora",
       rocket: "Explorer IS1",
       launchDate: "December 27, 2040",
       target: "Kepler-442-b",
@@ -44,7 +45,7 @@ describe("Test Launches API", () => {
         .send(postRequestBody)
         .expect("Content-Type", /json/)
         .expect(201);
-      console.log(response);
+
       //cheeck the answer has the same expected body
       // expect(response.body).toStrictEqual(postResponseBody);
     });
